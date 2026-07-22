@@ -1,33 +1,41 @@
-version: '3.0'
 services:
-  nginx:
+  api:
+    container_name: go-api
     build:
-      context: ./nginx/
-    depends_on:
-      - ser1
-      - ser2
-      - ser3
+      context: .
+      dockerfile: Dockerfile
+    image: go-api:latest
     ports:
-      - "80:80"
-    restart: always
-
-  ser1:
-    build: 
-      context: .
+      - 8000:5050
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    develop:
+      watch:
+        - path: .
+          action: rebuild
+      
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.55.0
+    volumes:
+      - ./Docker/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+  
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:11.3.0
+    volumes:
+      - ./Docker/grafana.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - grafana-data:/var/lib/grafana
+    ports:
+      - 3000:3000
     environment:
-      - SERVER_ID=1
-    restart: always
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
 
-  ser2:
-    build: 
-      context: .
-    environment:
-      - SERVER_ID=2
-    restart: always
-
-  ser3:
-    build: 
-      context: .
-    environment:
-      - SERVER_ID=3
-    restart: always
+volumes:
+  grafana-data:

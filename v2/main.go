@@ -47,7 +47,7 @@ func main() {
 		})
 	})
 
-	router.Run(":8000")
+	router.Run(":5050")
 }
 
 // Custom metrics handler with custom registry
