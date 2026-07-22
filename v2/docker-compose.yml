@@ -1,2 +1,33 @@
 version: '3.0'
 services:
+  nginx:
+    build:
+      context: ./nginx/
+    depends_on:
+      - ser1
+      - ser2
+      - ser3
+    ports:
+      - "80:80"
+    restart: always
+
+  ser1:
+    build: 
+      context: .
+    environment:
+      - SERVER_ID=1
+    restart: always
+
+  ser2:
+    build: 
+      context: .
+    environment:
+      - SERVER_ID=2
+    restart: always
+
+  ser3:
+    build: 
+      context: .
+    environment:
+      - SERVER_ID=3
+    restart: always

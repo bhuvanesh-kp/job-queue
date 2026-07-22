@@ -1,29 +1,29 @@
 # Use the official Golang image for building
-FROM golang:1.2t AS builder
+FROM golang:1.25 AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Copy Go modules and dependencies
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
 # Copy source code
-COPY . .
+COPY main.go .
 
 # Build the application
-RUN go build -o main .
+RUN go build -o /main 
 
-##################### multistage docker build ########################
+##################### multistage docker build ##########################
 
 # Use a minimal base image for final deployment
-FROM alpine:latest
+# FROM alpine:latest
 
-# Set working directory in the container
-WORKDIR /root/
+# # Set working directory in the container
+# WORKDIR /root/
 
-# Copy the built binary from the builder stage
-COPY --from=builder /app/main .
+# # Copy the built binary from the builder stage
+# COPY --from=builder /app/main .
 
 # Expose the application port
 EXPOSE 8080
