@@ -6,8 +6,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:5050
-    networks:
-      - go-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
@@ -25,8 +23,6 @@ services:
       - ./Docker/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090
-    networks:
-      - go-network
   
   grafana:
     container_name: grafana
@@ -36,15 +32,9 @@ services:
       - grafana-data:/var/lib/grafana
     ports:
       - 3000:3000
-    networks:
-      - go-network
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=password
 
 volumes:
   grafana-data:
-
-networks:
-  go-network:
-    driver: bridge
