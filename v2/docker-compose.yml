@@ -4,10 +4,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: go-api:latest
     ports:
       - 8000:5050
+    networks:
+      - go-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -19,22 +22,30 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:v2.55.0
-    # volumes:
-    #   - ./Docker/prometheus.yml:/etc/prometheus/prometheus.yml
+    volumes:
+      - ./Docker/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090
+    networks:
+      - go-network
   
   grafana:
     container_name: grafana
     image: grafana/grafana:11.3.0
-    # volumes:
-    #   - ./Docker/grafana.yml:/etc/grafana/provisioning/datasources/datasource.yaml
-    #   - grafana-data:/var/lib/grafana
+    volumes:
+      - ./Docker/grafana.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - grafana-data:/var/lib/grafana
     ports:
       - 3000:3000
+    networks:
+      - go-network
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=password
 
 volumes:
   grafana-data:
+
+networks:
+  go-network:
+    driver: bridge
