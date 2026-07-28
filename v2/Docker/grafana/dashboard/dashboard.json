@@ -16,7 +16,8 @@
                 "defaults": { "unit": "bytes", "custom": { "lineWidth": 2 } }
             },
             "targets": [
-                { "expr": "mem_alloc_bytes", "legendFormat": "cnt" }
+                { "expr": "api_http_request_total", "legendFormat": "cnt" },
+                { "expr": "api_http_request_error_total", "legendFormat": "failure" }
             ]
         }
     ]
