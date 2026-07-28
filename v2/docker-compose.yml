@@ -28,13 +28,19 @@ services:
       - 9090:9090
     networks:
       - go-network
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
+    restart: unless-stopped
   
   grafana:
     container_name: grafana
     image: grafana/grafana:11.3.0
     volumes:
-      - ./Docker/grafana/provision/datasource/grafana.yml:/etc/grafana/provisioning/datasources/datasource.yaml
-      - ./Docker/grafana/provision/dashboard/dashboard.yml:/var/lib/grafana/dashboard/dashboard.yml
+      - ./Docker/grafana/provision:/etc/grafana/provisioning
+      - ./Docker/grafana/dashboards:/var/lib/grafana/dashboards
       - grafana-data:/var/lib/grafana
     ports:
       - 3000:3000
@@ -45,6 +51,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=password
     depends_on:
       - prometheus
+    restart: unless-stopped
 
 volumes:
   grafana-data:

@@ -1,6 +1,6 @@
 apiVersion: 3
 
-provider: 
+providers: 
   - name: "bhuvi"
     orgId: 1
     folder: ""

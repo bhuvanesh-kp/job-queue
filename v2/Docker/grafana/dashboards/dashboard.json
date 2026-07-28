@@ -5,7 +5,7 @@
     "version": 1,
     "refresh": "5s",
     "time": { "from": "now-5m", "to": "now" },
-    "pannels": [
+    "panels": [
         {
             "id": 1,
             "type": "timeseries",

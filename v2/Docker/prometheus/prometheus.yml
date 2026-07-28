@@ -5,5 +5,5 @@ global:
 scrape_configs:
   - job_name: myapp
     static_configs:
-      - targets: ["localhost:8000"]
+      - targets: ["go-api:5050"]
     scrape_interval: 2s
