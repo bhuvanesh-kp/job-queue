@@ -43,9 +43,12 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=password
+    depends_on:
+      - prometheus
 
 volumes:
   grafana-data:
+  prometheus_data:
 
 networks:
   go-network:
