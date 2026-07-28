@@ -1,0 +1,23 @@
+{
+    "title": "Metrics to plot the number of request hit on a endpoint",
+    "uid": "7878876",
+    "schemaVersion": 36,
+    "version": 1,
+    "refresh": "5s",
+    "time": { "from": "now-5m", "to": "now" },
+    "pannels": [
+        {
+            "id": 1,
+            "type": "timeseries",
+            "title": "Hits on endpoint",
+            "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+            "datasource": "Prometheus",
+            "fieldConfig": {
+                "defaults": { "unit": "bytes", "custom": { "lineWidth": 2 } }
+            },
+            "targets": [
+                { "expr": "mem_alloc_bytes", "legendFormat": "cnt" }
+            ]
+        }
+    ]
+}
