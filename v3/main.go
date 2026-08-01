@@ -22,7 +22,7 @@ func main() {
 	wg := &sync.WaitGroup{}
 	mu := &sync.Mutex{}
 
-	wg.Add(102)
+	wg.Add(202 + 10)
 
 	go func(alloc *[]int) {
 		defer close(done)
@@ -44,12 +44,35 @@ func main() {
 		done <- true
 	}()
 
-	for range 100 {
-		mu.Lock()
-		go addElement(&alloc, wg)
-		mu.Unlock()
-		time.Sleep(10 * time.Millisecond)
-	}
+	wg.Go(func() {
+		for range 100 {
+			mu.Lock()
+			go addElement(&alloc, wg)
+			mu.Unlock()
+			time.Sleep(100 * time.Millisecond)
+		}
+	})
+
+
+	wg.Go(func() {
+		for range 100 {
+			mu.Lock()
+			go deleteElement(&alloc, wg)
+			mu.Unlock()
+			time.Sleep(110 * time.Millisecond)
+		}
+	})
+
+	// booster logic
+	wg.Go(func() {
+		for range 10 {
+			mu.Lock()
+			go addElement(&alloc, wg)
+			mu.Unlock()
+			time.Sleep(45 * time.Millisecond)
+		}
+	})
+
 
 	wg.Wait()
 }
@@ -57,4 +80,11 @@ func main() {
 func addElement(alloc *[]int, wg *sync.WaitGroup) {
 	defer wg.Done()
 	*alloc = append(*alloc, int(1))
+}
+
+func deleteElement(alloc *[]int, wg *sync.WaitGroup){
+	defer wg.Done()
+	if (len(*alloc) != 0){
+		*alloc = (*alloc)[:len(*alloc)-1]
+	}
 }
