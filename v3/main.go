@@ -24,7 +24,7 @@ func main() {
 
 	wg.Add(102)
 
-	go func(alloc *[]int){
+	go func(alloc *[]int) {
 		defer close(done)
 		defer wg.Done()
 		for {
@@ -33,18 +33,18 @@ func main() {
 				fmt.Printf("Application stopping")
 				return
 			case <-tm.C:
-				fmt.Println("Current size of application, ", unsafe.Sizeof(alloc) * uintptr(len(*alloc)))
+				fmt.Println("Current size of application, ", unsafe.Sizeof(alloc)*uintptr(len(*alloc)))
 			}
 		}
 	}(&alloc)
 
-	go func(){
+	go func() {
 		defer wg.Done()
 		time.Sleep(15 * time.Second)
 		done <- true
 	}()
 
-	for range 100{
+	for range 100 {
 		mu.Lock()
 		go addElement(&alloc, wg)
 		mu.Unlock()
