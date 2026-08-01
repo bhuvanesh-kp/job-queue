@@ -8,13 +8,12 @@ import (
 )
 
 func main() {
-	alloc := make([]int, 10)
-
+	alloc := make([]int, 1, 15)
 	alloc = append(alloc, int(1))
 
 	done := make(chan bool)
 
-	a := unsafe.Sizeof(alloc)
+	a := unsafe.Sizeof(alloc) * uintptr(len(alloc))
 	fmt.Println("Current size of slice is ", a)
 
 	tm := time.NewTicker(time.Second)
@@ -23,9 +22,9 @@ func main() {
 	wg := &sync.WaitGroup{}
 	mu := &sync.Mutex{}
 
-	wg.Add(12)
+	wg.Add(102)
 
-	go func(){
+	go func(alloc *[]int){
 		defer close(done)
 		defer wg.Done()
 		for {
@@ -34,23 +33,22 @@ func main() {
 				fmt.Printf("Application stopping")
 				return
 			case <-tm.C:
-				fmt.Println("Current size of application, ", unsafe.Sizeof(alloc) - uintptr(len(alloc)) * unsafe.Sizeof(int(0)))
+				fmt.Println("Current size of application, ", unsafe.Sizeof(alloc) * uintptr(len(*alloc)))
 			}
 		}
-	}()
+	}(&alloc)
 
 	go func(){
 		defer wg.Done()
-		time.Sleep(10 * time.Second)
+		time.Sleep(15 * time.Second)
 		done <- true
 	}()
 
-	for range 10{
+	for range 100{
 		mu.Lock()
 		go addElement(&alloc, wg)
 		mu.Unlock()
-
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	wg.Wait()
